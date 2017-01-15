@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +15,8 @@ namespace Game6 {
     RenderTarget2D renderTarget;
 
     public KeyboardState CurrentKeyboardState { get; set; }
+
+    public List<Plant> Plants { get; set; }
     
     public Game1() {
       graphics = new GraphicsDeviceManager(this);
@@ -39,6 +42,7 @@ namespace Game6 {
 					false,
 					GraphicsDevice.PresentationParameters.BackBufferFormat,
 					DepthFormat.Depth24);
+      Plants = new List<Plant>();
     }
     
     /// <summary>
@@ -71,6 +75,9 @@ namespace Game6 {
         Exit();
       
       if (Player != null) Player.Update(this, gameTime);
+      foreach (var plant in Plants) {
+	plant.Update(this, gameTime);
+      }
 
       base.Update(gameTime);
     }
@@ -87,6 +94,9 @@ namespace Game6 {
       preBatch.Begin(sortMode: SpriteSortMode.FrontToBack);
       
       if (Player != null) Player.Draw(preBatch);
+      foreach (var plant in Plants) {
+	plant.Draw(preBatch);
+      }
       
       preBatch.End();
       

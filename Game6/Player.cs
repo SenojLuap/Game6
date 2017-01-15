@@ -6,36 +6,18 @@ using Microsoft.Xna.Framework.Input;
 namespace Game6 {
   
   public class Player : ILocalDrawable, IUpdateable {
-    // Player's position
     public Vector2 Pos { get; set; }
-
-    // Player's draw position.
-    public Vector2 DrawPos {
-      get {
-	return Pos.ToPoint().ToVector2();
-      }
-    }
-    
-    // Players current velocity.
     public Vector2 Velocity { get; set; }
-    
-    // Player sprite !!!REMOVE!!!!
     public Texture2D Sprite { get; set; }
-    
-    /// <summary>
-    ///   Player's count of available seeds.
-    /// </summary>
     public int SeedCount { get; set; }
-    
-    /// <summary>
-    ///   The player's speed, in px/s
-    /// </summary>
     public int Speed { get; set; }
+    public float PlantSeedCooldown { get; set; }
     
     
     public Player() {
       Pos = new Vector2(200f, 200f);
       Speed = 100;
+      SeedCount = 5;
     }
     
     
@@ -73,8 +55,18 @@ namespace Game6 {
       }
 
       ApplyVelocity(newVelocity);
-      float secondsPassed = (float)gameTime.ElapsedGameTime.Milliseconds / 1000f;
+      float secondsPassed = (float)gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
       UpdatePosition(secondsPassed);
+      if (PlantSeedCooldown > 0.0) PlantSeedCooldown -= secondsPassed;
+
+      if (kb.IsKeyDown(Keys.E) && SeedCount > 0 && PlantSeedCooldown <= 0.0) {
+	BasicPlant plant = new BasicPlant();
+	plant.Initialize(game.Content);
+	plant.Pos = Pos;
+	game.Plants.Add(plant);
+	SeedCount--;
+	PlantSeedCooldown = 1.0f;
+      }
     }
     
     
